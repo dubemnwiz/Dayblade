@@ -1,5 +1,4 @@
 import pygame
 
 class PhysicsEntity:
-    def __init__(self, game):
-        
+    def __init__(self, game, ):
