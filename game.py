@@ -1,5 +1,8 @@
 import sys
+
 import pygame
+
+from scripts.entities import PhysicsEntity #Importing player object
 
 class Game:
 
@@ -24,6 +27,7 @@ class Game:
 
         self.collision_area = pygame.Rect(50, 50 , 300, 50)
 
+        self.player = physicsEntity(self, 'player', (50,50), (8,15))
     def run(self):
 
         # Creating game loop - each frame is an iteration in a loop
