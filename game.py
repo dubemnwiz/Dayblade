@@ -2,7 +2,9 @@ import sys
 
 import pygame
 
+from scripts.utils import load_image, load_images
 from scripts.entities import PhysicsEntity #Importing player object
+from scripts.tilemap import TileMap
 
 class Game:
 
@@ -12,26 +14,42 @@ class Game:
         pygame.init()
 
         # Creates the window - Tuple for Resolution in pixels
-        self.screen = pygame.display.set_mode((640, 480))
         pygame.display.set_caption('Ninja Game')
 
-        # Initializing clock object
+        # Initializing display to be blit on screen (for pixel look)
+        self.screen = pygame.display.set_mode((640, 480))
+        self.display = pygame.Surface((320, 240))
+
+        # Initializing clock 
         self.clock = pygame.time.Clock()
 
+        # Initializing movement variable
         self.movement = [False, False]
 
-        self.collision_area = pygame.Rect(50, 50 , 300, 50)
+        self.assets = {
+            'decor': load_images('tiles/decor'),
+            'grass': load_images('tiles/grass'),
+            'large_decor': load_images('tiles/large_decor'),
+            'stone': load_images('tiles/stone'),
+            'player' : load_image('entities/player.png')
+        }
 
-        self.player = PhysicsEntity(self, 'player', (50,50), (8,15))
+
+        # Initializing player entity
+        self.player = PhysicsEntity(self, 'player', (50, 50), (8, 15))
+
+        self.tilemap = TileMap(self)
 
     def run(self):
 
         # Creating game loop - each frame is an iteration in a loop
         while True:
-            self.screen.fill((14, 219, 248))
+            self.display.fill((14, 219, 248))
+
+            self.tilemap.render(self.display)
             
-            self.player.update(self.movement[1]-self.movement[0], 0)
-            self.player.render(self.screen)
+            self.player.update((self.movement[1] - self.movement[0], 0))
+            self.player.render(self.display)
 
             for event in pygame.event.get(): #get() grabs user input
                 if event.type == pygame.QUIT: #Window closed
@@ -48,9 +66,11 @@ class Game:
                     if event.key == pygame.K_RIGHT:
                         self.movement[1] = False
                 
-            
-            # Updates display
+            #Scaling display to the size of the screen/window
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
+
             pygame.display.update()
-            self.clock.tick(60) #60 FPS, clock sleeps for _ to maintain FPS
+
+            self.clock.tick(60)
 
 Game().run()
