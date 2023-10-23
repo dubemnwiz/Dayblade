@@ -25,7 +25,7 @@ class Game:
             
             for event in pygame.event.get(): #Get grabs user input
                 if event.type == pygame.QUIT: #Window closed
-                    pygame.quit()
+                    pygame.quit() 
                     sys.exit()
             
             # Updates display
