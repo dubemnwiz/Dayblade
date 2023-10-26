@@ -4,6 +4,7 @@ import pygame
 from scripts.utils import load_image, load_images
 from scripts.entities import PhysicsEntity #Importing entity object
 from scripts.tilemap import TileMap
+from scripts.clouds import Clouds
 
 class Game:
 
@@ -36,7 +37,12 @@ class Game:
             'large_decor': load_images('tiles/large_decor'),
             'stone': load_images('tiles/stone'),
             'player' : load_image('entities/player.png'),
+            'background' : load_image('background.png'),
+            'clouds' : load_images('clouds'),
         }
+
+        # Initializing clouds
+        self.clouds = Clouds(self.assets['clouds'], count=16)
 
         # Initializing player entity
         self.player = PhysicsEntity(self, 'player', (50, 50), (8, 15))
@@ -44,17 +50,34 @@ class Game:
         # Initializing tile map
         self.tilemap = TileMap(self)
 
+        # Initializing 'camera' effect
+        self.scroll = [0, 0]
+
     def run(self):
 
         # Creating game loop - each frame is an iteration in a loop
         while True:
-            self.display.fill((14, 219, 248))
 
-            self.tilemap.render(self.display)
+            # Clearing screen every iteration
+            self.display.blit(self.assets['background'], (0, 0))
+
+            # Centering camera on player
+            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 30
+            self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 30
             
-            # Updates player based on movement then renders new player
+            # Creating int version of scroll to fix jittering of pixels
+            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
+
+            # Updating + Rendering clouds
+            self.clouds.update()
+            self.clouds.render(self.display, offset=render_scroll)
+
+            # Rendering tile map
+            self.tilemap.render(self.display, offset=render_scroll)
+            
+            # Updating + Rendering player based on movement
             self.player.update(self.tilemap, (self.movement[1] - self.movement[0], 0))
-            self.player.render(self.display)
+            self.player.render(self.display, render_scroll)
 
             # Grabs user input
             for event in pygame.event.get():
