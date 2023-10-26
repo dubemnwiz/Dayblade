@@ -2,6 +2,9 @@ import pygame
 
 # Offsets of 9 neighboring tiles (for collisions)
 NEIGHBOR_OFFSETS = [(-1, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (0, 0), (-1, 1), (0, 1), (1, 1)]
+
+# The tiles able to experience collisions
+# We use a set for faster lookups
 PHYSICS_TILES = {'grass', 'stone'}
 
 class TileMap:
@@ -24,14 +27,14 @@ class TileMap:
 
         # Converting pixel position into grid position
         tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
-        
+
         for offset in NEIGHBOR_OFFSETS:
             check_loc = str(tile_loc[0] + offset[0]) + ';' + str(tile_loc[1] + offset[1])
             if check_loc in self.tilemap:
                 tiles.append(self.tilemap[check_loc])
         return tiles
     
-    #Filters nearby tiles for things that have physics enabled
+    #Filters nearby tiles for collision vs. non-collision types
     #Converting tiles with physics into 'rects'
     def physics_rects_around(self, pos):
         rects = []

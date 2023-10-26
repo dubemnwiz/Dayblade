@@ -13,18 +13,23 @@ class PhysicsEntity:
         self.velocity = [0, 0]
         self.collisions = {'up': False, 'down': False, 'right': False, 'left': False}
 
+    #Creating collision hitbox for entity, Updated based on position
     def rect(self):
         return pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
     #Handling updates for entity movement, collisions, etc.
     def update(self, tilemap, movement=(0, 0)):
+
+        #Keeps track of collisions we've had, resetting it each frame
         self.collisions = {'up': False, 'down': False, 'right': False, 'left': False}
 
         # Creating a vector for how much entity should be moved in frame in relation to passed in movement
         frame_movement = (movement[0] + self.velocity[0], movement[1] + self.velocity[1])
 
-        # Entity movement in two stages (2D)
+        # Entity movement in two stages (x-axis)
         self.pos[0] += frame_movement[0]
+
+        # Creating hitbox and handling collisions
         entity_rect = self.rect()
         for rect in tilemap.physics_rects_around(self.pos):
             if entity_rect.colliderect(rect):
@@ -36,7 +41,10 @@ class PhysicsEntity:
                     self.collisions['left'] = True
                 self.pos[0] = entity_rect.x
 
+        # Entity movement in two stages (y-axis)
         self.pos[1] += frame_movement[1]
+
+        # Creating hitbox and handling collisions
         entity_rect = self.rect()
         for rect in tilemap.physics_rects_around(self.pos):
             if entity_rect.colliderect(rect):
@@ -52,6 +60,7 @@ class PhysicsEntity:
         # Modifying downward velocity by 0.1
         self.velocity[1] = min(5, self.velocity[1] + 0.1)
 
+        # Resetting y-velocity if we hit the ground/ceiling
         if self.collisions['down'] or self.collisions['up']:
             self.velocity[1] = 0
 
