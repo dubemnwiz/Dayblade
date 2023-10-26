@@ -1,24 +1,30 @@
 import pygame
 
+# Offsets of 9 neighboring tiles (for collisions)
 NEIGHBOR_OFFSETS = [(-1, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (0, 0), (-1, 1), (0, 1), (1, 1)]
 PHYSICS_TILES = {'grass', 'stone'}
 
 class TileMap:
+
     def __init__(self, game, tile_size=16):
         self.game = game
         self.tile_size = tile_size
-        self.tilemap = {} # Square grid of tiles
+        self.tilemap = {} # Square grid of tiles, where we handle physics
         self.offgrid_tiles = [] # Tiles not aligned with grid
 
         for i in range(10):
-            #Maps tiles and their attribtutes
+            #Maps tile location to tile itself
+            #Implementing the tile and its attributes as a hashmap
             self.tilemap[str(3 + i) + ';10'] = {'type': 'grass', 'variant': 1, 'pos': (3 + i, 10)}
             self.tilemap['10;' + str(5 + i)] = {'type': 'stone', 'variant': 1, 'pos': (10, 5 + i)}
             
-    #Gives us tiles around position of an entity we pass in
+    #Gives us tiles around position of an entity
     def tiles_around(self, pos):
         tiles = []
+
+        # Converting pixel position into grid position
         tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
+        
         for offset in NEIGHBOR_OFFSETS:
             check_loc = str(tile_loc[0] + offset[0]) + ';' + str(tile_loc[1] + offset[1])
             if check_loc in self.tilemap:
@@ -34,7 +40,7 @@ class TileMap:
                 rects.append(pygame.Rect(tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size, self.tile_size, self.tile_size))
         return rects
 
-    #Allows tiles to be displayed on screen
+    # Rendering tile map
     def render(self, surf):
         for tile in self.offgrid_tiles:
             surf.blit(self.game.assets[tile['type']][tile['variant']], tile['pos'])
