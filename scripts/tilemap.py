@@ -1,3 +1,4 @@
+import json
 import pygame
 
 # Offsets of 9 neighboring tiles (for collisions)
@@ -14,12 +15,6 @@ class TileMap:
         self.tile_size = tile_size
         self.tilemap = {} # Square grid of tiles, where we handle physics
         self.offgrid_tiles = [] # Tiles not aligned with grid
-
-        for i in range(10):
-            #Maps tile location to tile itself
-            #Implementing the tile and its attributes as a hashmap
-            self.tilemap[str(3 + i) + ';10'] = {'type': 'grass', 'variant': 1, 'pos': (3 + i, 10)}
-            self.tilemap['10;' + str(5 + i)] = {'type': 'stone', 'variant': 1, 'pos': (10, 5 + i)}
             
     #Gives us tiles around position of an entity
     def tiles_around(self, pos):
@@ -33,6 +28,12 @@ class TileMap:
             if check_loc in self.tilemap:
                 tiles.append(self.tilemap[check_loc])
         return tiles
+    
+    # Creating save function for tilemaps generated with level editor
+    def save(self, path):
+        f = open(path, 'w')
+        json.dump({'tilemap': self.tilemap, 'tile_size': self.tile_size, 'offgrid': self.offgrid_tiles}, f)
+        f.close()
     
     #Filters nearby tiles for collision vs. non-collision types
     #Converting tiles with physics into 'rects'
