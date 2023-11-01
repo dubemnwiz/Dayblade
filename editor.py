@@ -6,7 +6,7 @@ from scripts.tilemap import TileMap
 
 RENDER_SCALE = 2.0
 
-# Creating level editor
+# Creating level editor in pygame window
 class Editor:
 
     def __init__(self):
