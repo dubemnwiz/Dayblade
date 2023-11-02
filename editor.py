@@ -4,6 +4,7 @@ import pygame
 from scripts.utils import load_images
 from scripts.tilemap import TileMap
 
+# Variable to scale down rendering for window
 RENDER_SCALE = 2.0
 
 # Creating level editor in pygame window
