@@ -73,6 +73,12 @@ class Editor:
             # Rendering tilemap
             self.tilemap.render(self.display, offset=render_scroll)
 
+            # Loading in map if file exists
+            try:
+                self.tilemap.load("map.json")
+            except FileNotFoundError:
+                pass
+
             # Displaying what tile we are currently using
             current_tile_img = self.assets[self.tile_list[self.tile_group]][self.tile_variant].copy()
             current_tile_img.set_alpha(100)
@@ -155,6 +161,8 @@ class Editor:
                         self.movement[3] = True
                     if event.key == pygame.K_g:
                         self.ongrid = not self.ongrid
+                    if event.key == pygame.K_t:
+                        self.tilemap.autotile()
                     if event.key == pygame.K_o:
                         self.tilemap.save('map.json')
                     if event.key == pygame.K_LSHIFT:
