@@ -1,3 +1,3 @@
-In the process of developing my first game!
+Postponed to focus on more pressing matters 😒
 
 A 2D Platformer developed using Python + the Pygames library
